@@ -7,13 +7,17 @@
 
 import SwiftUI
 
+
 struct ContentView: View {
+    @State private var text: String = ""
+
     var body: some View {
         VStack {
             Image(systemName: "globe")
                 .imageScale(.large)
                 .foregroundColor(.accentColor)
             Text("Hello, world!")
+            TextField("Insert Text Here", text: $text)
         }
         .padding()
     }

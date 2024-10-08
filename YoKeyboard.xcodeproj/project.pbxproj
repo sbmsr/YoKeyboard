@@ -11,7 +11,33 @@
 		652FB47329EA143F00405A7C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652FB47229EA143F00405A7C /* ContentView.swift */; };
 		652FB47529EA144000405A7C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 652FB47429EA144000405A7C /* Assets.xcassets */; };
 		652FB47829EA144000405A7C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 652FB47729EA144000405A7C /* Preview Assets.xcassets */; };
+		652FB49529EA147C00405A7C /* KeyboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652FB49429EA147C00405A7C /* KeyboardViewController.swift */; };
+		652FB49929EA147C00405A7C /* YoKeyboardExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 652FB49229EA147C00405A7C /* YoKeyboardExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		652FB49729EA147C00405A7C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 652FB46529EA143F00405A7C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 652FB49129EA147C00405A7C;
+			remoteInfo = YoKeyboardExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		652FB48D29EA145A00405A7C /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				652FB49929EA147C00405A7C /* YoKeyboardExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		652FB46D29EA143F00405A7C /* YoKeyboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YoKeyboard.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -19,10 +45,20 @@
 		652FB47229EA143F00405A7C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		652FB47429EA144000405A7C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		652FB47729EA144000405A7C /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		652FB49229EA147C00405A7C /* YoKeyboardExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = YoKeyboardExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		652FB49429EA147C00405A7C /* KeyboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardViewController.swift; sourceTree = "<group>"; };
+		652FB49629EA147C00405A7C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		652FB46A29EA143F00405A7C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		652FB48F29EA147C00405A7C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -36,6 +72,7 @@
 			isa = PBXGroup;
 			children = (
 				652FB46F29EA143F00405A7C /* YoKeyboard */,
+				652FB49329EA147C00405A7C /* YoKeyboardExtension */,
 				652FB46E29EA143F00405A7C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -44,6 +81,7 @@
 			isa = PBXGroup;
 			children = (
 				652FB46D29EA143F00405A7C /* YoKeyboard.app */,
+				652FB49229EA147C00405A7C /* YoKeyboardExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -67,6 +105,15 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		652FB49329EA147C00405A7C /* YoKeyboardExtension */ = {
+			isa = PBXGroup;
+			children = (
+				652FB49429EA147C00405A7C /* KeyboardViewController.swift */,
+				652FB49629EA147C00405A7C /* Info.plist */,
+			);
+			path = YoKeyboardExtension;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -77,15 +124,34 @@
 				652FB46929EA143F00405A7C /* Sources */,
 				652FB46A29EA143F00405A7C /* Frameworks */,
 				652FB46B29EA143F00405A7C /* Resources */,
+				652FB48D29EA145A00405A7C /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				652FB49829EA147C00405A7C /* PBXTargetDependency */,
 			);
 			name = YoKeyboard;
 			productName = YoKeyboard;
 			productReference = 652FB46D29EA143F00405A7C /* YoKeyboard.app */;
 			productType = "com.apple.product-type.application";
+		};
+		652FB49129EA147C00405A7C /* YoKeyboardExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 652FB49A29EA147C00405A7C /* Build configuration list for PBXNativeTarget "YoKeyboardExtension" */;
+			buildPhases = (
+				652FB48E29EA147C00405A7C /* Sources */,
+				652FB48F29EA147C00405A7C /* Frameworks */,
+				652FB49029EA147C00405A7C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = YoKeyboardExtension;
+			productName = YoKeyboardExtension;
+			productReference = 652FB49229EA147C00405A7C /* YoKeyboardExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -98,6 +164,9 @@
 				LastUpgradeCheck = 1420;
 				TargetAttributes = {
 					652FB46C29EA143F00405A7C = {
+						CreatedOnToolsVersion = 14.2;
+					};
+					652FB49129EA147C00405A7C = {
 						CreatedOnToolsVersion = 14.2;
 					};
 				};
@@ -116,6 +185,7 @@
 			projectRoot = "";
 			targets = (
 				652FB46C29EA143F00405A7C /* YoKeyboard */,
+				652FB49129EA147C00405A7C /* YoKeyboardExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -127,6 +197,13 @@
 			files = (
 				652FB47829EA144000405A7C /* Preview Assets.xcassets in Resources */,
 				652FB47529EA144000405A7C /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		652FB49029EA147C00405A7C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -142,7 +219,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		652FB48E29EA147C00405A7C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				652FB49529EA147C00405A7C /* KeyboardViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		652FB49829EA147C00405A7C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 652FB49129EA147C00405A7C /* YoKeyboardExtension */;
+			targetProxy = 652FB49729EA147C00405A7C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		652FB47929EA144000405A7C /* Debug */ = {
@@ -262,6 +355,7 @@
 		652FB47C29EA144000405A7C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
@@ -291,6 +385,7 @@
 		652FB47D29EA144000405A7C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
@@ -317,6 +412,56 @@
 			};
 			name = Release;
 		};
+		652FB49B29EA147C00405A7C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KZCFR434L5;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = YoKeyboardExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = YoKeyboardExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = sbmsr.YoKeyboard.YoKeyboardExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		652FB49C29EA147C00405A7C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KZCFR434L5;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = YoKeyboardExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = YoKeyboardExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = sbmsr.YoKeyboard.YoKeyboardExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -334,6 +479,15 @@
 			buildConfigurations = (
 				652FB47C29EA144000405A7C /* Debug */,
 				652FB47D29EA144000405A7C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		652FB49A29EA147C00405A7C /* Build configuration list for PBXNativeTarget "YoKeyboardExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				652FB49B29EA147C00405A7C /* Debug */,
+				652FB49C29EA147C00405A7C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
