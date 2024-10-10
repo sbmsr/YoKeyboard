@@ -1,7 +1,12 @@
 import UIKit
 
 class KeyboardViewController: UIInputViewController {
-    private var keys = ["q", "w", "e", "r", "t", "y"]
+    private var keys = [
+        ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
+        ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
+        ["z", "x", "c", "v", "b", "n", "m"],
+        ["spacebar"]
+    ]
     
     private var keyboard: UIStackView!
     private var morphButton: UIButton!
@@ -14,41 +19,51 @@ class KeyboardViewController: UIInputViewController {
     }
 
     private func setupKeyboard() {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.alignment = .fill
-        stackView.distribution = .fillProportionally
-        stackView.spacing = 6  // Adjust spacing between keys
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        for k in keys {
-            let key = UIButton(type: .system)
-            key.setTitle(k, for: .normal)
-            key.titleLabel?.font = UIFont.systemFont(ofSize: 24) // Adjust the font size as needed
+        let keyboardStackView = UIStackView()
+        keyboardStackView.axis = .vertical
+        keyboardStackView.alignment = .fill
+        keyboardStackView.distribution = .fillEqually
+        keyboardStackView.spacing = 4  // Adjust spacing between keys
+        keyboardStackView.translatesAutoresizingMaskIntoConstraints = false
+
+        for row in keys {
+            let rowStackView = UIStackView()
+            rowStackView.axis = .horizontal
+            rowStackView.alignment = .fill
+            rowStackView.distribution = .fillProportionally
+            rowStackView.spacing = 4  // Adjust spacing between keys
+            rowStackView.translatesAutoresizingMaskIntoConstraints = false
             
-            // Add border to see the bounding box
-            key.layer.borderWidth = 2
-            key.layer.borderColor = UIColor.white.cgColor
-            key.layer.cornerRadius = 5
-            key.setTitleColor(UIColor.black, for: .normal)
-            key.backgroundColor = UIColor.white  // this makes the button fully tappable
-            
-            key.addTarget(self, action: #selector(keyTapped(_:event:)), for: .touchUpInside)
-            
-            stackView.addArrangedSubview(key)
+            for k in row {
+                let key = UIButton(type: .system)
+                key.setTitle(k, for: .normal)
+                key.titleLabel?.font = UIFont.systemFont(ofSize: 24) // Adjust the font size as needed
+                
+                // Add border to see the bounding box
+                key.layer.borderWidth = 2
+                key.layer.borderColor = UIColor.white.cgColor
+                key.layer.cornerRadius = 5
+                key.setTitleColor(UIColor.black, for: .normal)
+                key.backgroundColor = UIColor.white  // this makes the button fully tappable
+                
+                key.addTarget(self, action: #selector(keyTapped(_:event:)), for: .touchUpInside)
+                
+                rowStackView.addArrangedSubview(key)
+            }
+            keyboardStackView.addArrangedSubview(rowStackView)
         }
         
-        view.addSubview(stackView)
+        view.addSubview(keyboardStackView)
 
-        // Constraints to make the stack view fill the width of the keyboard
+        // Constraints to make the keyboardStackView fill the view horizontally and position it vertically
         NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10), // Left padding
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10), // Right padding
-            stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            stackView.heightAnchor.constraint(equalToConstant: 40) // Adjust the height of the keys
+            keyboardStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10), // Left padding
+            keyboardStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10), // Right padding
+            keyboardStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 20.0),
+            keyboardStackView.heightAnchor.constraint(equalToConstant: 180) // Adjust the total height of the keyboard
         ])
         
-        keyboard = stackView
+        keyboard = keyboardStackView
     }
     
     private func setupMorphButton() {
@@ -72,7 +87,7 @@ class KeyboardViewController: UIInputViewController {
         morphButton.setTitle(title, for: .normal);
     }
     
-    private let PIXEL_BOUNDARY: CGFloat = 20.0
+    private let PIXEL_BOUNDARY: CGFloat = 8.0
     private let MIN_WIDTH: CGFloat = 20.0
 
     @objc private func keyTapped(_ sender: UIButton, event: UIEvent) {
@@ -88,10 +103,18 @@ class KeyboardViewController: UIInputViewController {
             NSLog("Button center (x): \(buttonCenter)")
             
             let distanceFromCenter = tapLocation.x - buttonCenter
+            
+            let rowStackView = keyboard.arrangedSubviews.first { row in
+                guard let rowStackView = row as? UIStackView else { return false }
+                return rowStackView.arrangedSubviews.contains { key in
+                    guard let button = key as? UIButton else { return false }
+                    return button.currentTitle == sender.currentTitle
+                }
+            }
 
             // Find the index of the tapped button in the stack view
-            if isMorphModeEnabled, let stackView = keyboard, let index = stackView.arrangedSubviews.firstIndex(of: sender) {
-                
+            if isMorphModeEnabled, let stackView = rowStackView as? UIStackView, let index = stackView.arrangedSubviews.firstIndex(of: sender) {
+
                 // Adjust the width based on the tap position
                 if abs(distanceFromCenter) > (sender.bounds.width/2 - PIXEL_BOUNDARY) {  // If tap is <PIXEL_BOUNDARY> pixels (or less) away from edge
                     let direction: CGFloat = distanceFromCenter > 0 ? 1 : -1  // Positive for right, negative for left
