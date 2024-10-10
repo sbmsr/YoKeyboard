@@ -1,13 +1,16 @@
 import UIKit
 
 class KeyboardViewController: UIInputViewController {
-    private var keys = ["q", "w"]
+    private var keys = ["q", "w", "e", "r", "t", "y"]
     
     private var keyboard: UIStackView!
+    private var morphButton: UIButton!
+    private var isMorphModeEnabled = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupKeyboard()
+        setupMorphButton()
     }
 
     private func setupKeyboard() {
@@ -15,7 +18,7 @@ class KeyboardViewController: UIInputViewController {
         stackView.axis = .horizontal
         stackView.alignment = .fill
         stackView.distribution = .fillProportionally
-        stackView.spacing = 10  // Adjust spacing between keys
+        stackView.spacing = 6  // Adjust spacing between keys
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
         for k in keys {
@@ -48,9 +51,29 @@ class KeyboardViewController: UIInputViewController {
         keyboard = stackView
     }
     
-    private let PIXEL_BOUNDARY: CGFloat = 20.0
-    private let MIN_KEY_WIDTH: CGFloat = 20.0
+    private func setupMorphButton() {
+        morphButton = UIButton(type: .system)
+        morphButton.setTitle("Enable Morph Mode", for: .normal)
+        morphButton.addTarget(self, action: #selector(toggleMorphMode), for: .touchUpInside)
+        morphButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(morphButton)
+        
+        NSLayoutConstraint.activate([
+            morphButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 10),
+            morphButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+        ])
+    }
+    
+    @objc private func toggleMorphMode() {
+        isMorphModeEnabled.toggle()
 
+        let title = isMorphModeEnabled ? "Disable Morph Mode" : "Enable Morph Mode";
+        morphButton.setTitle(title, for: .normal);
+    }
+    
+    private let PIXEL_BOUNDARY: CGFloat = 20.0
+    private let MIN_WIDTH: CGFloat = 20.0
 
     @objc private func keyTapped(_ sender: UIButton, event: UIEvent) {
         guard let keyTitle = sender.title(for: .normal) else { return }
@@ -67,20 +90,14 @@ class KeyboardViewController: UIInputViewController {
             let distanceFromCenter = tapLocation.x - buttonCenter
 
             // Find the index of the tapped button in the stack view
-            if let stackView = keyboard, let index = stackView.arrangedSubviews.firstIndex(of: sender) {
+            if isMorphModeEnabled, let stackView = keyboard, let index = stackView.arrangedSubviews.firstIndex(of: sender) {
                 
                 // Adjust the width based on the tap position
                 if abs(distanceFromCenter) > (sender.bounds.width/2 - PIXEL_BOUNDARY) {  // If tap is <PIXEL_BOUNDARY> pixels (or less) away from edge
                     let direction: CGFloat = distanceFromCenter > 0 ? 1 : -1  // Positive for right, negative for left
-                    let changeAmount: CGFloat = 30 * direction  // Adjust the button width by 30 points
+                    let changeAmount: CGFloat = PIXEL_BOUNDARY * direction
 
-                    // Remove any existing width constraints on the tapped button
-                    if let widthConstraint = sender.constraints.first(where: { $0.firstAttribute == .width }) {
-                        sender.removeConstraint(widthConstraint)
-                    }
-
-                    // Adjust the width of the tapped button
-                    sender.widthAnchor.constraint(equalToConstant: sender.frame.width + abs(changeAmount)).isActive = true
+                    var morphedNeighbor = false;
                     
                     // Adjust the width of the neighboring button if it exists
                     if direction > 0, index + 1 < stackView.arrangedSubviews.count {
@@ -90,11 +107,12 @@ class KeyboardViewController: UIInputViewController {
                         let newWidth = nextButton.frame.width - abs(changeAmount)
                         
                         // Only apply the width constraint if the new width is above the minimum
-                        if newWidth >= MIN_KEY_WIDTH {
-                            if let nextWidthConstraint = nextButton.constraints.first(where: { $0.firstAttribute == .width }) {
-                                nextButton.removeConstraint(nextWidthConstraint)
-                            }
+                        if newWidth >= MIN_WIDTH {
+                             if let nextWidthConstraint = nextButton.constraints.first(where: { $0.firstAttribute == .width }) {
+                                 nextButton.removeConstraint(nextWidthConstraint)
+                             }
                             nextButton.widthAnchor.constraint(equalToConstant: newWidth).isActive = true
+                            morphedNeighbor = true;
                         }
                         
                     } else if direction < 0, index - 1 >= 0 {
@@ -104,12 +122,23 @@ class KeyboardViewController: UIInputViewController {
                         let newWidth = previousButton.frame.width - abs(changeAmount)
                         
                         // Only apply the width constraint if the new width is above the minimum
-                        if newWidth >= MIN_KEY_WIDTH {
-                            if let prevWidthConstraint = previousButton.constraints.first(where: { $0.firstAttribute == .width }) {
-                                previousButton.removeConstraint(prevWidthConstraint)
-                            }
+                        if newWidth >= MIN_WIDTH {
+                             if let prevWidthConstraint = previousButton.constraints.first(where: { $0.firstAttribute == .width }) {
+                                 previousButton.removeConstraint(prevWidthConstraint)
+                             }
                             previousButton.widthAnchor.constraint(equalToConstant: newWidth).isActive = true
+                            morphedNeighbor = true;
                         }
+                    }
+
+                    if (morphedNeighbor) {
+                         // Remove any existing width constraints on the tapped button
+                         if let widthConstraint = sender.constraints.first(where: { $0.firstAttribute == .width }) {
+                             sender.removeConstraint(widthConstraint)
+                         }
+                        
+                        // Adjust the width of the tapped button
+                        sender.widthAnchor.constraint(equalToConstant: sender.frame.width + abs(changeAmount)).isActive = true
                     }
                     
                     // Ensure the layout updates

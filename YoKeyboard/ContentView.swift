@@ -17,9 +17,7 @@ struct ContentView: View {
                 .imageScale(.large)
                 .foregroundColor(.accentColor)
             Text("Hello, world!")
-            Text("please type the following text!")
-            Text("qqwwqqwwqq")
-            TextField("", text: $text)
+            TextField("input text here", text: $text)
         }
         .padding()
     }
