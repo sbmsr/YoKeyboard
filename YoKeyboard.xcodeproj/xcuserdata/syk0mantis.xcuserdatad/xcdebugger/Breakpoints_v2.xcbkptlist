@@ -7,45 +7,45 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "62841D91-3748-4B82-95D1-202EEE7CF8B0"
-            shouldBeEnabled = "No"
+            uuid = "40EF6768-CF54-4594-8DC7-60602AA97969"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "YoKeyboardExtension/KeyboardViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "410"
-            endingLineNumber = "410"
-            landmarkName = "handleContinue()"
+            startingLineNumber = "777"
+            endingLineNumber = "777"
+            landmarkName = "buildOrganicKeyboard(from:)"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "62841D91-3748-4B82-95D1-202EEE7CF8B0 - 509b2013802a603a"
+                  uuid = "40EF6768-CF54-4594-8DC7-60602AA97969 - ddd0b6c1b96538cd"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "closure #2 (Swift.Bool) -&gt; () in YoKeyboardExtension.KeyboardViewController.handleContinue() -&gt; ()"
+                  symbolName = "YoKeyboardExtension.KeyboardViewController.buildOrganicKeyboard(from: Swift.Dictionary&lt;Swift.String, Swift.Dictionary&lt;Swift.String, Any&gt;&gt;) -&gt; ()"
                   moduleName = "YoKeyboardExtension"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/syk0mantis/Code/iOS/YoKeyboard/YoKeyboardExtension/KeyboardViewController.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "412"
-                  endingLineNumber = "412">
+                  startingLineNumber = "777"
+                  endingLineNumber = "777">
                </Location>
                <Location
-                  uuid = "62841D91-3748-4B82-95D1-202EEE7CF8B0 - 509b2013802a6078"
+                  uuid = "40EF6768-CF54-4594-8DC7-60602AA97969 - 65cb0b5f865f8cbd"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "closure #2 (Swift.Bool) -&gt; () in YoKeyboardExtension.KeyboardViewController.handleContinue() -&gt; ()"
+                  symbolName = "closure #1 (__C.UIView) -&gt; () in YoKeyboardExtension.KeyboardViewController.buildOrganicKeyboard(from: Swift.Dictionary&lt;Swift.String, Swift.Dictionary&lt;Swift.String, Any&gt;&gt;) -&gt; ()"
                   moduleName = "YoKeyboardExtension"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/syk0mantis/Code/iOS/YoKeyboard/YoKeyboardExtension/KeyboardViewController.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "410"
-                  endingLineNumber = "410">
+                  startingLineNumber = "777"
+                  endingLineNumber = "777">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -53,16 +53,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "91009A7B-E61A-4F35-8679-A62BADF30BD0"
-            shouldBeEnabled = "No"
+            uuid = "AEEB39C4-A61A-42A4-BD4D-CB7F6642923A"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "YoKeyboardExtension/KeyboardViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "338"
-            endingLineNumber = "338"
-            landmarkName = "handleLearnModeTap(_:)"
+            startingLineNumber = "450"
+            endingLineNumber = "450"
+            landmarkName = "toggleLearnMode()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
