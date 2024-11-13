@@ -7,16 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "2D87DF68-60D4-47D5-BC58-BD8CB086CB55"
-            shouldBeEnabled = "No"
+            uuid = "AEEB39C4-A61A-42A4-BD4D-CB7F6642923A"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "YoKeyboardExtension/KeyboardViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "103"
-            endingLineNumber = "103"
-            landmarkName = "keyTapped(_:event:)"
+            startingLineNumber = "450"
+            endingLineNumber = "450"
+            landmarkName = "toggleLearnMode()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
