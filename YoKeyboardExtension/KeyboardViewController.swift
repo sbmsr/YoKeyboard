@@ -37,7 +37,7 @@ class KeyboardViewController: UIInputViewController {
     private let trainingPhrase = "the quick brown fox jumped over the lazy dog"
     private var currentPhraseIndex = 0
     private var currentIteration = 1
-    private let totalIterations = 1
+    private let totalIterations = 3
     private var tapRecords: [Character: [TapRecord]] = [:]
     private var tapGesture: UITapGestureRecognizer?
     private var learnModeView: UIView?
@@ -58,6 +58,8 @@ class KeyboardViewController: UIInputViewController {
     
     private let PIXEL_BOUNDARY: CGFloat = 8.0
     private let MIN_WIDTH: CGFloat = 20.0
+    
+    private var layoutData: [String: [String: Any]] = [:]
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -855,7 +857,7 @@ class KeyboardViewController: UIInputViewController {
         }
         
         // Add spacebar at the bottom
-         addOrganicSpacebar(to: organicKeyboard)
+        addOrganicSpacebar(to: organicKeyboard)
     }
     
     private func createVoronoiRegion(for center: CGPoint, key: String, allPoints: [CGPoint], bounds: CGRect) -> UIBezierPath {
@@ -991,464 +993,136 @@ extension Array {
 
 extension KeyboardViewController {
     private func buildVoronoiKeyboard(from layoutData: [String: [String: Any]]) {
-        // Scale points to keyboard bounds
-        let bounds = keyboard.bounds
-        print("Keyboard bounds: \(bounds)")  // Debug print
-        
-        // Create container view with visible background for debugging
-        let containerView = UIView(frame: bounds)
-        containerView.backgroundColor = .darkGray  // Debug color
-        keyboard.addArrangedSubview(containerView)
-        
-        // Ensure container view fills keyboard
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            containerView.topAnchor.constraint(equalTo: keyboard.topAnchor),
-            containerView.bottomAnchor.constraint(equalTo: keyboard.bottomAnchor),
-            containerView.leadingAnchor.constraint(equalTo: keyboard.leadingAnchor),
-            containerView.trailingAnchor.constraint(equalTo: keyboard.trailingAnchor)
-        ])
-        
-        var points: [VPoint] = []
-        print("Raw points:") // Debug print
-        
-        // Convert layout data to points and scale to view bounds
-        for (key, data) in layoutData {
-            if let meanData = data["mean"] as? [String: CGFloat],
-               let x = meanData["x"],
-               let y = meanData["y"] {
-                let point = VPoint(x: x, y: y, key: key)
-                points.append(point)
-                print("Point \(key): (\(x), \(y))") // Debug print
-            }
-        }
-        
-        // Add debug visualization - draw points
-        for point in points {
-            let debugDot = UIView(frame: CGRect(x: point.x - 5, y: point.y - 5, width: 10, height: 10))
-            debugDot.backgroundColor = .red
-            debugDot.layer.cornerRadius = 5
-            containerView.addSubview(debugDot)
-            
-            let label = UILabel(frame: CGRect(x: point.x + 5, y: point.y + 5, width: 30, height: 20))
-            label.text = point.key
-            label.textColor = .white
-            containerView.addSubview(label)
-        }
-        
-        // Generate Voronoi diagram
-        let triangles = delaunayTriangulation(points: points)
-        print("Generated \(triangles.count) triangles") // Debug print
-        
-        // Create Voronoi cells
-        let cells = createVoronoiFromDelaunay(triangles: triangles, points: points, bounds: bounds)
-        print("Created \(cells.count) cells") // Debug print
-        
-        // Display cells
-        displayVoronoiCells(cells: cells)
-        
-        // Add spacebar
-//        addVoronoiSpacebar(to: containerView)
-    }
-    
-    private struct DelaunayEdge: Hashable {
-        let p1: VPoint
-        let p2: VPoint
-        
-        init(_ p1: VPoint, _ p2: VPoint) {
-            // Order points consistently for proper hash/equality
-            if p1.key < p2.key {
-                self.p1 = p1
-                self.p2 = p2
-            } else {
-                self.p1 = p2
-                self.p2 = p1
-            }
-        }
-        
-        func hash(into hasher: inout Hasher) {
-            hasher.combine(p1.key)
-            hasher.combine(p2.key)
-        }
-        
-        static func == (lhs: DelaunayEdge, rhs: DelaunayEdge) -> Bool {
-            return lhs.p1.key == rhs.p1.key && lhs.p2.key == rhs.p2.key
-        }
-    }
-    
-    private func delaunayTriangulation(points: [VPoint]) -> [(VPoint, VPoint, VPoint)] {
-        var triangles: [(VPoint, VPoint, VPoint)] = []
-        
-        // Super triangle containing all points
-        let margin: CGFloat = 1000
-        let superTriangle = (
-            VPoint(x: -margin, y: -margin, key: "super1"),
-            VPoint(x: margin * 2, y: -margin, key: "super2"),
-            VPoint(x: 0, y: margin * 2, key: "super3")
-        )
-        
-        // Start with super triangle
-        var triangulation = [superTriangle]
-        
-        // Add points one at a time
-        for point in points {
-            var edges: Set<DelaunayEdge> = []
-            
-            // Find triangles whose circumcircle contains the point
-            triangulation = triangulation.filter { triangle in
-                let (p1, p2, p3) = triangle
-                if circumcircleContains(p1: p1, p2: p2, p3: p3, point: point) {
-                    // Add edges of triangle to edge buffer
-                    edges.insert(DelaunayEdge(p1, p2))
-                    edges.insert(DelaunayEdge(p2, p3))
-                    edges.insert(DelaunayEdge(p3, p1))
-                    return false
-                }
-                return true
-            }
-            
-            // Add new triangles for each edge
-            for edge in edges {
-                triangulation.append((edge.p1, edge.p2, point))
-            }
-        }
-        
-        // Remove triangles using vertices from super triangle
-        triangles = triangulation.filter { triangle in
-            let (p1, p2, p3) = triangle
-            return !p1.key.hasPrefix("super") &&
-                   !p2.key.hasPrefix("super") &&
-                   !p3.key.hasPrefix("super")
-        }
-        
-        return triangles
-    }
-
-    
-    
-    private func ordered(_ p1: VPoint, _ p2: VPoint) -> (VPoint, VPoint) {
-        return p1.key < p2.key ? (p1, p2) : (p2, p1)
-    }
-    
-    private func circumcircleContains(p1: VPoint, p2: VPoint, p3: VPoint, point: VPoint) -> Bool {
-        let dx = p1.x - point.x
-        let dy = p1.y - point.y
-        let ex = p2.x - point.x
-        let ey = p2.y - point.y
-        let fx = p3.x - point.x
-        let fy = p3.y - point.y
-        
-        let ap = dx * dx + dy * dy
-        let bp = ex * ex + ey * ey
-        let cp = fx * fx + fy * fy
-        
-        return (dx * (ey * cp - bp * fy) -
-                dy * (ex * cp - bp * fx) +
-                ap * (ex * fy - ey * fx)) < 0
-    }
-    
-    private func createVoronoiFromDelaunay(triangles: [(VPoint, VPoint, VPoint)],
-                                         points: [VPoint],
-                                         bounds: CGRect) -> [String: UIBezierPath] {
-        var cells: [String: [CGPoint]] = [:]  // Store points for each cell
-        
-        // Initialize arrays for each point
-        for point in points {
-            cells[point.key] = []
-        }
-        
-        // Create Voronoi cells from Delaunay triangles
-        for (p1, p2, p3) in triangles {
-            if let center = circumcenter(p1: p1, p2: p2, p3: p3) {
-                // Add center point to each point's array
-                cells[p1.key]?.append(center)
-                cells[p2.key]?.append(center)
-                cells[p3.key]?.append(center)
-            }
-        }
-        
-        // Create paths from collected points
-        var paths: [String: UIBezierPath] = [:]
-        for (key, points) in cells {
-            guard !points.isEmpty else { continue }
-            
-            // Sort points clockwise around their center
-            let center = points.reduce(CGPoint.zero) {
-                CGPoint(x: $0.x + $1.x, y: $0.y + $1.y)
-            }
-            let centerPoint = CGPoint(
-                x: center.x / CGFloat(points.count),
-                y: center.y / CGFloat(points.count)
-            )
-            
-            let sortedPoints = points.sorted { p1, p2 in
-                let angle1 = atan2(p1.y - centerPoint.y, p1.x - centerPoint.x)
-                let angle2 = atan2(p2.y - centerPoint.y, p2.x - centerPoint.x)
-                return angle1 < angle2
-            }
-            
-            // Create path
-            let path = UIBezierPath()
-            if let first = sortedPoints.first {
-                path.move(to: first)
-                for point in sortedPoints.dropFirst() {
-                    path.addLine(to: point)
-                }
-                path.close()
-                paths[key] = path
-            }
-        }
-        
-        return paths
-    }
-    
-    private func circumcenter(p1: VPoint, p2: VPoint, p3: VPoint) -> CGPoint? {
-        let d = 2 * (p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y))
-        if abs(d) < CGFloat.ulpOfOne { return nil }
-        
-        let ux = ((p1.x * p1.x + p1.y * p1.y) * (p2.y - p3.y) +
-                 (p2.x * p2.x + p2.y * p2.y) * (p3.y - p1.y) +
-                 (p3.x * p3.x + p3.y * p3.y) * (p1.y - p2.y)) / d
-        
-        let uy = ((p1.x * p1.x + p1.y * p1.y) * (p3.x - p2.x) +
-                 (p2.x * p2.x + p2.y * p2.y) * (p1.x - p3.x) +
-                 (p3.x * p3.x + p3.y * p3.y) * (p2.x - p1.x)) / d
-        
-        return CGPoint(x: ux, y: uy)
-    }
-    
-    private func displayVoronoiCells(cells: [String: UIBezierPath]) {
-        guard let containerView = keyboard.arrangedSubviews.first as? UIView else { return }
-        
-        // Create cell layers
-        for (key, path) in cells {
-            let shapeLayer = CAShapeLayer()
-            shapeLayer.path = path.cgPath
-            shapeLayer.fillColor = UIColor.white.cgColor
-            shapeLayer.strokeColor = UIColor.blue.cgColor  // Make borders more visible
-            shapeLayer.lineWidth = 2.0  // Thicker lines
-            shapeLayer.name = key
-            
-            // Debug print path bounds
-            print("Cell \(key) bounds: \(path.bounds)")
-            
-            containerView.layer.addSublayer(shapeLayer)
-            
-            // Add visible button for testing
-            let button = UIButton(type: .system)
-            button.setTitle(key, for: .normal)
-            button.titleLabel?.font = .systemFont(ofSize: 24)
-            button.backgroundColor = .systemBlue.withAlphaComponent(0.3)  // Semi-transparent background
-            button.frame = path.bounds
-            button.accessibilityIdentifier = key
-            button.addTarget(self, action: #selector(voronoiKeyTapped(_:)), for: .touchUpInside)
-            containerView.addSubview(button)
-            
-            keyRegions.append(shapeLayer)
-            touchAreas[key] = button
-        }
-    }
-
-    
-    private func createVoronoiEdges(points: [VPoint], bounds: CGRect) -> [VEdge] {
-        var edges: [VEdge] = []
-        let maxDistance: CGFloat = bounds.width / 3  // Scale based on keyboard width
-        
-        for i in 0..<points.count {
-            for j in (i+1)..<points.count {
-                let p1 = points[i]
-                let p2 = points[j]
-                
-                // Calculate distance between points
-                let dx = p2.x - p1.x
-                let dy = p2.y - p1.y
-                let dist = sqrt(dx * dx + dy * dy)
-                
-                // Only create edges between reasonably close points
-                if dist < maxDistance {
-                    // Calculate midpoint
-                    let midX = (p1.x + p2.x) / 2
-                    let midY = (p1.y + p2.y) / 2
-                    
-                    // Calculate perpendicular vector (normalized)
-                    let perpX = -dy / dist
-                    let perpY = dx / dist
-                    
-                    // Scale vector by a reasonable amount
-                    let edgeLength = min(dist, maxDistance / 2)
-                    
-                    // Create edge with controlled length
-                    let edge = VEdge(
-                        start: CGPoint(
-                            x: midX + perpX * edgeLength,
-                            y: midY + perpY * edgeLength
-                        ),
-                        end: CGPoint(
-                            x: midX - perpX * edgeLength,
-                            y: midY - perpY * edgeLength
-                        ),
-                        left: p1,
-                        right: p2
-                    )
-                    
-                    // Only add edge if it's within bounds
-                    if isEdgeInBounds(edge, bounds: bounds) {
-                        edges.append(edge)
-                    }
-                }
-            }
-        }
-        
-        return edges
-    }
-    
-    private func isEdgeInBounds(_ edge: VEdge, bounds: CGRect) -> Bool {
-        // Expand bounds slightly to account for edge cases
-        let expandedBounds = bounds.insetBy(dx: -10, dy: -10)
-        
-        // Check if either endpoint is in bounds
-        if let end = edge.end {
-            return expandedBounds.contains(edge.start) ||
-            expandedBounds.contains(end)
-        }
-        return expandedBounds.contains(edge.start)
-    }
-    
-    private func clipPointToBounds(_ point: CGPoint, bounds: CGRect) -> CGPoint {
-        let x = min(max(point.x, bounds.minX), bounds.maxX)
-        let y = min(max(point.y, bounds.minY), bounds.maxY)
-        return CGPoint(x: x, y: y)
-    }
-    
-    
-    
-    private func createVoronoiCells(edges: [VEdge], points: [VPoint]) {
+        self.layoutData = layoutData
         // Clear existing keyboard
         keyboard.arrangedSubviews.forEach { $0.removeFromSuperview() }
         touchAreas.removeAll()
         keyRegions.removeAll()
         
-        print("Creating cells for \(points.count) points with \(edges.count) edges")
-        
         // Create container view
         let containerView = UIView(frame: keyboard.bounds)
         keyboard.addArrangedSubview(containerView)
         
-        // Create edges layer
-        let edgesLayer = CAShapeLayer()
-        edgesLayer.fillColor = nil
-        edgesLayer.strokeColor = UIColor.red.cgColor
-        edgesLayer.lineWidth = 1.0
+        // Create image context with the same size as keyboard
+        UIGraphicsBeginImageContext(containerView.bounds.size)
+        guard let context = UIGraphicsGetCurrentContext() else { return }
         
-        let edgesPath = UIBezierPath()
-        for edge in edges {
-            edgesPath.move(to: edge.start)
-            if let end = edge.end {
-                edgesPath.addLine(to: end)
+        // For each pixel in the keyboard area
+        let width = Int(containerView.bounds.width)
+        let height = Int(containerView.bounds.height)
+        
+        for x in 0..<width {
+            for y in 0..<height {
+                var minDist = CGFloat.infinity
+                var closestKey: String?
+                
+                // Find the closest key center
+                for (key, data) in layoutData {
+                    if let meanData = data["mean"] as? [String: CGFloat],
+                       let centerX = meanData["x"],
+                       let centerY = meanData["y"] {
+                        let dist = sqrt(pow(CGFloat(x) - centerX, 2) + pow(CGFloat(y) - centerY, 2))
+                        if dist < minDist {
+                            minDist = dist
+                            closestKey = key
+                        }
+                    }
+                }
+                
+                // Color the pixel based on the closest key
+                if let key = closestKey {
+                    // Create a unique color for each key
+                    let hue = CGFloat(key.unicodeScalars.first?.value ?? 0) / 255.0
+                    let color = UIColor(hue: hue, saturation: 0.7, brightness: 0.9, alpha: 0.3)
+                    context.setFillColor(color.cgColor)
+                    context.fill(CGRect(x: x, y: y, width: 1, height: 1))
+                }
             }
         }
-        edgesLayer.path = edgesPath.cgPath
-        containerView.layer.addSublayer(edgesLayer)
         
-        // Create cell regions
-        for point in points {
-            let keyRegion = CAShapeLayer()
-            keyRegion.fillColor = UIColor.white.cgColor
-            keyRegion.strokeColor = UIColor.lightGray.cgColor
-            keyRegion.lineWidth = 1.0
-            keyRegion.name = point.key
-            
-            // Create touch area
-            let touchArea = UIButton()
-            touchArea.backgroundColor = .clear
-            touchArea.accessibilityIdentifier = point.key
-            touchArea.setTitle(point.key, for: .normal)
-            touchArea.setTitleColor(.black, for: .normal)
-            touchArea.titleLabel?.font = .systemFont(ofSize: 24)
-            touchArea.addTarget(self, action: #selector(voronoiKeyTapped(_:)), for: .touchUpInside)
-            touchArea.translatesAutoresizingMaskIntoConstraints = false
-            
-            containerView.layer.addSublayer(keyRegion)
-            containerView.addSubview(touchArea)
-            
-            // Position elements
-            NSLayoutConstraint.activate([
-                touchArea.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-                touchArea.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-                touchArea.topAnchor.constraint(equalTo: containerView.topAnchor),
-                touchArea.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
-            ])
-            
-            keyRegions.append(keyRegion)
-            touchAreas[point.key] = touchArea
+        // Create image from context
+        guard let voronoiImage = UIGraphicsGetImageFromCurrentImageContext() else { return }
+        UIGraphicsEndImageContext()
+        
+        // Create image view to display the Voronoi diagram
+        let imageView = UIImageView(image: voronoiImage)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(imageView)
+        
+        // Add key labels and touch areas
+        for (key, data) in layoutData {
+            if let meanData = data["mean"] as? [String: CGFloat],
+               let x = meanData["x"],
+               let y = meanData["y"] {
+                // Add label
+                let label = UILabel()
+                label.text = key
+                label.font = .systemFont(ofSize: 24)
+                label.textAlignment = .center
+                label.translatesAutoresizingMaskIntoConstraints = false
+                containerView.addSubview(label)
+                
+                // Add touch area
+                let button = UIButton()
+                button.backgroundColor = .clear
+                button.setTitle(key, for: .normal)
+                button.accessibilityIdentifier = key
+                // In buildVoronoiKeyboard, update the button target:
+                button.addTarget(self, action: #selector(voronoiKeyTapped(_:event:)), for: .touchUpInside)
+                button.translatesAutoresizingMaskIntoConstraints = false
+                containerView.addSubview(button)
+                
+                NSLayoutConstraint.activate([
+                    label.centerXAnchor.constraint(equalTo: containerView.leadingAnchor, constant: x),
+                    label.centerYAnchor.constraint(equalTo: containerView.topAnchor, constant: y),
+                    
+                    // Create a fixed-size touch area around the key center
+                    button.widthAnchor.constraint(equalToConstant: 44),  // Reasonable touch target size
+                    button.heightAnchor.constraint(equalToConstant: 44),
+                    button.centerXAnchor.constraint(equalTo: containerView.leadingAnchor, constant: x),
+                    button.centerYAnchor.constraint(equalTo: containerView.topAnchor, constant: y)
+                ])
+                
+                
+                touchAreas[key] = button
+            }
         }
         
         // Add spacebar
-        addVoronoiSpacebar(to: containerView)
+        //        addVoronoiSpacebar(to: containerView)
     }
     
-    @objc private func voronoiKeyTapped(_ sender: UIButton) {
-        guard let key = sender.accessibilityIdentifier else { return }
+    @objc private func voronoiKeyTapped(_ sender: UIButton, event: UIEvent? = nil) {
+        guard let touch = event?.allTouches?.first else { return }
+        let location = touch.location(in: keyboard)
         
-        // Find the corresponding shape layer
-        if let shapeLayer = keyRegions.first(where: { $0.name == key }) {
-            // Provide visual feedback
-            let originalColor = shapeLayer.fillColor
-            shapeLayer.fillColor = UIColor.lightGray.cgColor
-            
+        // Find the closest key to the touch location
+        var minDist = CGFloat.infinity
+        var closestKey: String?
+        
+        for (key, data) in layoutData {
+            if let meanData = data["mean"] as? [String: CGFloat],
+               let centerX = meanData["x"],
+               let centerY = meanData["y"] {
+                let dist = sqrt(pow(location.x - centerX, 2) + pow(location.y - centerY, 2))
+                if dist < minDist {
+                    minDist = dist
+                    closestKey = key
+                }
+            }
+        }
+        
+        if let key = closestKey {
             switch state {
             case .default:
                 textDocumentProxy.insertText(key)
             case .learn:
-                let location = sender.center
                 recordTapAndAdvance(at: location)
             case .morph:
                 break
             }
-            
-            // Reset color after brief delay
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                shapeLayer.fillColor = originalColor
-            }
         }
     }
-    
-    
-    private func createCellPath(from edges: [VEdge], point: VPoint) -> UIBezierPath {
-        let path = UIBezierPath()
-        
-        // Sort edges to form a continuous path
-        var orderedEdges = [VEdge]()
-        var currentPoint = edges.first?.start
-        
-        while orderedEdges.count < edges.count {
-            if let edge = edges.first(where: { edge in
-                !orderedEdges.contains(edge) &&
-                (edge.start == currentPoint || edge.end == currentPoint)
-            }) {
-                orderedEdges.append(edge)
-                currentPoint = edge.start == currentPoint ? edge.end : edge.start
-            } else {
-                break
-            }
-        }
-        
-        // Create path
-        if let firstEdge = orderedEdges.first {
-            path.move(to: firstEdge.start)
-            
-            for edge in orderedEdges {
-                if let end = edge.end {
-                    path.addLine(to: end)
-                }
-            }
-            
-            path.close()
-        }
-        
-        return path
-    }
-    
     private func addVoronoiSpacebar(to containerView: UIView) {
         // Similar to previous spacebar implementation
         let spacebarHeight: CGFloat = 40
@@ -1512,11 +1186,11 @@ struct VPoint: Hashable, Equatable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(key)
     }
-//
-//    static func == (lhs: VPoint, rhs: VPoint) -> Bool {
-//        return lhs.key == rhs.key
-//    }
-//
+    //
+    //    static func == (lhs: VPoint, rhs: VPoint) -> Bool {
+    //        return lhs.key == rhs.key
+    //    }
+    //
     static func == (lhs: VPoint, rhs: VPoint) -> Bool {
         return lhs.x == rhs.x &&
         lhs.y == rhs.y &&

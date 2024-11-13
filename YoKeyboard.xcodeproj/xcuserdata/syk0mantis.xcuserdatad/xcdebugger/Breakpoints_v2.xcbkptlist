@@ -7,52 +7,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "40EF6768-CF54-4594-8DC7-60602AA97969"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "YoKeyboardExtension/KeyboardViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "777"
-            endingLineNumber = "777"
-            landmarkName = "buildOrganicKeyboard(from:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "40EF6768-CF54-4594-8DC7-60602AA97969 - ddd0b6c1b96538cd"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "YoKeyboardExtension.KeyboardViewController.buildOrganicKeyboard(from: Swift.Dictionary&lt;Swift.String, Swift.Dictionary&lt;Swift.String, Any&gt;&gt;) -&gt; ()"
-                  moduleName = "YoKeyboardExtension"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/syk0mantis/Code/iOS/YoKeyboard/YoKeyboardExtension/KeyboardViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "777"
-                  endingLineNumber = "777">
-               </Location>
-               <Location
-                  uuid = "40EF6768-CF54-4594-8DC7-60602AA97969 - 65cb0b5f865f8cbd"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (__C.UIView) -&gt; () in YoKeyboardExtension.KeyboardViewController.buildOrganicKeyboard(from: Swift.Dictionary&lt;Swift.String, Swift.Dictionary&lt;Swift.String, Any&gt;&gt;) -&gt; ()"
-                  moduleName = "YoKeyboardExtension"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/syk0mantis/Code/iOS/YoKeyboard/YoKeyboardExtension/KeyboardViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "777"
-                  endingLineNumber = "777">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "AEEB39C4-A61A-42A4-BD4D-CB7F6642923A"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
