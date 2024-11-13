@@ -32,9 +32,8 @@ class KeyboardViewController: UIInputViewController {
     
     private var keyRegions: [CAShapeLayer] = []
     private var layoutData: [String: [String: Any]] = [:]
-    private var touchAreas: [String: UIButton] = [:]
     
-    private let trainingPhrase = "the quick brown fox jumped over the lazy dog"
+    private let trainingPhrase = "the quick brown fox jumps over the lazy dog"
     private var currentPhraseIndex = 0
     private var currentIteration = 1
     private let totalIterations = 3
@@ -596,7 +595,6 @@ extension KeyboardViewController {
         self.layoutData = layoutData
         // Clear existing keyboard
         keyboard.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        touchAreas.removeAll()
         keyRegions.removeAll()
         
         // Create container view
@@ -631,11 +629,40 @@ extension KeyboardViewController {
                 
                 // Color the pixel based on the closest key
                 if let key = closestKey {
-                    // Create a unique color for each key
-                    let hue = CGFloat(key.unicodeScalars.first?.value ?? 0) / 255.0
-                    let color = UIColor(hue: hue, saturation: 0.7, brightness: 0.9, alpha: 0.3)
-                    context.setFillColor(color.cgColor)
-                    context.fill(CGRect(x: x, y: y, width: 1, height: 1))
+                    // Use predefined colors for each key
+                    let keyColors: [String: UIColor] = [
+                        "q": UIColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 0.3),      // Red
+                        "w": UIColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 0.3),      // Green  
+                        "e": UIColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 0.3),      // Blue
+                        "r": UIColor(red: 1.0, green: 1.0, blue: 0.0, alpha: 0.3),      // Yellow
+                        "t": UIColor(red: 1.0, green: 0.0, blue: 1.0, alpha: 0.3),      // Magenta
+                        "y": UIColor(red: 0.0, green: 1.0, blue: 1.0, alpha: 0.3),      // Cyan
+                        "u": UIColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 0.3),      // Orange
+                        "i": UIColor(red: 0.5, green: 0.0, blue: 1.0, alpha: 0.3),      // Purple
+                        "o": UIColor(red: 0.0, green: 0.5, blue: 0.0, alpha: 0.3),      // Dark Green
+                        "p": UIColor(red: 0.5, green: 0.5, blue: 1.0, alpha: 0.3),      // Light Blue
+                        "a": UIColor(red: 1.0, green: 0.0, blue: 0.5, alpha: 0.3),      // Pink
+                        "s": UIColor(red: 0.5, green: 1.0, blue: 0.0, alpha: 0.3),      // Lime
+                        "d": UIColor(red: 0.0, green: 0.5, blue: 1.0, alpha: 0.3),      // Sky Blue
+                        "f": UIColor(red: 1.0, green: 0.5, blue: 0.5, alpha: 0.3),      // Light Red
+                        "g": UIColor(red: 0.5, green: 1.0, blue: 0.5, alpha: 0.3),      // Light Green
+                        "h": UIColor(red: 0.5, green: 0.5, blue: 0.0, alpha: 0.3),      // Olive
+                        "j": UIColor(red: 0.0, green: 0.5, blue: 0.5, alpha: 0.3),      // Teal
+                        "k": UIColor(red: 0.5, green: 0.0, blue: 0.5, alpha: 0.3),      // Dark Purple
+                        "l": UIColor(red: 0.7, green: 0.4, blue: 0.0, alpha: 0.3),      // Brown
+                        "z": UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 0.3),      // Light Gray
+                        "x": UIColor(red: 0.6, green: 0.6, blue: 0.6, alpha: 0.3),      // Gray
+                        "c": UIColor(red: 0.4, green: 0.4, blue: 0.4, alpha: 0.3),      // Dark Gray
+                        "v": UIColor(red: 1.0, green: 0.8, blue: 0.2, alpha: 0.3),      // Gold
+                        "b": UIColor(red: 0.8, green: 0.2, blue: 1.0, alpha: 0.3),      // Violet
+                        "n": UIColor(red: 0.2, green: 0.8, blue: 1.0, alpha: 0.3),      // Azure
+                        "m": UIColor(red: 1.0, green: 0.6, blue: 0.4, alpha: 0.3),      // Peach
+                    ]
+                    
+                    if let color = keyColors[key] {
+                        context.setFillColor(color.cgColor)
+                        context.fill(CGRect(x: x, y: y, width: 1, height: 1))
+                    }
                 }
             }
         }
@@ -647,41 +674,48 @@ extension KeyboardViewController {
         // Create image view to display the Voronoi diagram
         let imageView = UIImageView(image: voronoiImage)
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.isUserInteractionEnabled = true  // Make it interactive
         containerView.addSubview(imageView)
+        
+        // Add tap gesture recognizer to the image view
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleVoronoiTap(_:)))
+        imageView.addGestureRecognizer(tapGesture)
+        
+        // Add constraints for the image view to fill the container
+        NSLayoutConstraint.activate([
+            imageView.topAnchor.constraint(equalTo: containerView.topAnchor),
+            imageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            imageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
         
         // Add key labels and touch areas
         for (key, data) in layoutData {
             if let meanData = data["mean"] as? [String: CGFloat],
                let x = meanData["x"],
                let y = meanData["y"] {
-                // Add touch area
-                let button = UIButton()
-                button.backgroundColor = .clear
-                button.setTitle(key, for: .normal)
-                button.accessibilityIdentifier = key
-                // In buildVoronoiKeyboard, update the button target:
-                button.addTarget(self, action: #selector(voronoiKeyTapped(_:event:)), for: .touchUpInside)
-                button.translatesAutoresizingMaskIntoConstraints = false
-                containerView.addSubview(button)
+                // Add label for the key
+                let label = UILabel()
+                label.text = key
+                label.textAlignment = .center
+                label.translatesAutoresizingMaskIntoConstraints = false
+                containerView.addSubview(label)
                 
                 NSLayoutConstraint.activate([
-                    // Create a fixed-size touch area around the key center
-                    button.widthAnchor.constraint(equalToConstant: 44),  // Reasonable touch target size
-                    button.heightAnchor.constraint(equalToConstant: 44),
-                    button.centerXAnchor.constraint(equalTo: containerView.leadingAnchor, constant: x),
-                    button.centerYAnchor.constraint(equalTo: containerView.topAnchor, constant: y)
+                    label.widthAnchor.constraint(equalToConstant: 44),
+                    label.heightAnchor.constraint(equalToConstant: 44),
+                    label.centerXAnchor.constraint(equalTo: containerView.leadingAnchor, constant: x),
+                    label.centerYAnchor.constraint(equalTo: containerView.topAnchor, constant: y)
                 ])
                 
                 
-                touchAreas[key] = button
             }
         }
         
     }
     
-    @objc private func voronoiKeyTapped(_ sender: UIButton, event: UIEvent? = nil) {
-        guard let touch = event?.allTouches?.first else { return }
-        let location = touch.location(in: keyboard)
+    @objc private func handleVoronoiTap(_ gesture: UITapGestureRecognizer) {
+        let location = gesture.location(in: gesture.view)
         
         // Find the closest key to the touch location
         var minDist = CGFloat.infinity

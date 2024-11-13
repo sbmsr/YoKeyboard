@@ -1,3 +1,3 @@
-- [ ] add more color diversity
-- [ ] on tap of region, type letter (currently only works on letter tap itself)
-- [ ] add backspace, numbers, etc. to make it a full featured keyboard
+- [ ] add backspace, numbers, enter, and symbols to make it a full featured keyboard
+- [x] on tap of region, type letter (currently only works on letter tap itself)
+- [x] add more color diversity
