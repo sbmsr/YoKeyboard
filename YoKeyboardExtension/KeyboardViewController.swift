@@ -1054,14 +1054,6 @@ extension KeyboardViewController {
             if let meanData = data["mean"] as? [String: CGFloat],
                let x = meanData["x"],
                let y = meanData["y"] {
-                // Add label
-                let label = UILabel()
-                label.text = key
-                label.font = .systemFont(ofSize: 24)
-                label.textAlignment = .center
-                label.translatesAutoresizingMaskIntoConstraints = false
-                containerView.addSubview(label)
-                
                 // Add touch area
                 let button = UIButton()
                 button.backgroundColor = .clear
@@ -1073,9 +1065,6 @@ extension KeyboardViewController {
                 containerView.addSubview(button)
                 
                 NSLayoutConstraint.activate([
-                    label.centerXAnchor.constraint(equalTo: containerView.leadingAnchor, constant: x),
-                    label.centerYAnchor.constraint(equalTo: containerView.topAnchor, constant: y),
-                    
                     // Create a fixed-size touch area around the key center
                     button.widthAnchor.constraint(equalToConstant: 44),  // Reasonable touch target size
                     button.heightAnchor.constraint(equalToConstant: 44),
@@ -1088,8 +1077,6 @@ extension KeyboardViewController {
             }
         }
         
-        // Add spacebar
-        //        addVoronoiSpacebar(to: containerView)
     }
     
     @objc private func voronoiKeyTapped(_ sender: UIButton, event: UIEvent? = nil) {
@@ -1122,29 +1109,6 @@ extension KeyboardViewController {
                 break
             }
         }
-    }
-    private func addVoronoiSpacebar(to containerView: UIView) {
-        // Similar to previous spacebar implementation
-        let spacebarHeight: CGFloat = 40
-        let spacebarMargin: CGFloat = 8
-        
-        let spacebarLayer = CAShapeLayer()
-        let spacebarPath = UIBezierPath(
-            roundedRect: CGRect(
-                x: spacebarMargin,
-                y: containerView.bounds.height - spacebarHeight - spacebarMargin,
-                width: containerView.bounds.width - (spacebarMargin * 2),
-                height: spacebarHeight
-            ),
-            cornerRadius: 8
-        )
-        
-        spacebarLayer.path = spacebarPath.cgPath
-        spacebarLayer.fillColor = UIColor.white.cgColor
-        spacebarLayer.strokeColor = UIColor.lightGray.cgColor
-        spacebarLayer.lineWidth = 1.0
-        
-        containerView.layer.addSublayer(spacebarLayer)
     }
 }
 
