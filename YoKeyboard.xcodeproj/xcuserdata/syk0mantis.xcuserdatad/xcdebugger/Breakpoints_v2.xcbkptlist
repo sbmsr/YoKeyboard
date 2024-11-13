@@ -7,48 +7,62 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "3829E667-A159-4914-A30A-7845E0BEE28F"
+            uuid = "62841D91-3748-4B82-95D1-202EEE7CF8B0"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "YoKeyboardExtension/KeyboardViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "292"
-            endingLineNumber = "292"
-            landmarkName = "recordTapAndAdvance(at:)"
+            startingLineNumber = "410"
+            endingLineNumber = "410"
+            landmarkName = "handleContinue()"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "62841D91-3748-4B82-95D1-202EEE7CF8B0 - 509b2013802a603a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Swift.Bool) -&gt; () in YoKeyboardExtension.KeyboardViewController.handleContinue() -&gt; ()"
+                  moduleName = "YoKeyboardExtension"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/syk0mantis/Code/iOS/YoKeyboard/YoKeyboardExtension/KeyboardViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "412"
+                  endingLineNumber = "412">
+               </Location>
+               <Location
+                  uuid = "62841D91-3748-4B82-95D1-202EEE7CF8B0 - 509b2013802a6078"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Swift.Bool) -&gt; () in YoKeyboardExtension.KeyboardViewController.handleContinue() -&gt; ()"
+                  moduleName = "YoKeyboardExtension"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/syk0mantis/Code/iOS/YoKeyboard/YoKeyboardExtension/KeyboardViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "410"
+                  endingLineNumber = "410">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "97D7E71D-74CA-41C1-857D-3D3EC1075C2A"
+            uuid = "91009A7B-E61A-4F35-8679-A62BADF30BD0"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "YoKeyboardExtension/KeyboardViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "366"
-            endingLineNumber = "366"
-            landmarkName = "keyTapped(_:event:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "8C6F2623-ABD7-47FD-B04B-10161E87F843"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "YoKeyboardExtension/KeyboardViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "360"
-            endingLineNumber = "360"
-            landmarkName = "keyTapped(_:event:)"
+            startingLineNumber = "338"
+            endingLineNumber = "338"
+            landmarkName = "handleLearnModeTap(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
